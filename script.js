@@ -17,12 +17,114 @@ var map = canvas
 //Center the projection at the center of Boston
 var bostonLngLat = [-71.088066,42.315520]; //from http://itouchmap.com/latlong.html
 var projection = d3.geo.mercator()
-    //...
+    .translate([width/2,height/2])
+    .center([bostonLngLat[0],bostonLngLat[1]])
+    .scale(100000/.5)
 
-var path = d3.geo.path().projection(projection);
+//TODO: create a geo path generator
+var pathGenerator = d3.geo.path().projection(projection);
 
 //TODO: create a color scale
+var colorScale=d3.scale.linear().domain([0,300000]).range(['red','blue']);
+//var colorScale = d3.scale.linear().domain([0,.2]).range(['white','blue']);
 
 //TODO: create a d3.map() to store the value of median HH income per block group
+var incomeById=d3.map()
 
 //TODO: import data, parse, and draw
+queue()
+    .defer(d3.json,'data/bos_census_blk_group.geojson')
+    .defer(d3.json,'data/bos_neighborhoods.geojson')
+    .defer(d3.csv,'data/acs2013_median_hh_income.csv',parseData)
+    .await(function(err,census,neighbors){
+        draw(census,neighbors)
+
+    })
+
+function parseData(d){
+    incomeById.set(
+        d.geoid,
+        {income:+d.B19013001, name:d.name}
+    )
+}
+
+function draw(census,neighbors){
+
+    var mapA = map.append('g')
+        .selectAll('.map-census')
+        .data(census.features)
+        .enter()
+        .append('g')
+        .attr('class','map-census')
+
+
+    mapA
+        .append('path')
+        .attr('d', pathGenerator)
+        .style('fill',function(d){
+            var income=(incomeById.get(d.properties.geoid)).income
+            console.log(income);
+            return colorScale(income);})
+
+        //.call(getTooltips())
+
+   var mapB= map.append('g')
+       .selectAll('.map2-neighbors')
+       .data(neighbors.features)
+       .enter()
+       .append('g')
+       .attr('class','map2-neighbors')
+
+       mapB
+       .append('path')
+        .attr('d', pathGenerator)
+        .style('fill','none')
+        .style('stroke','white')
+           .on('mouseenter',function(d){
+               console.log(this);
+               d3.select('text')
+                   .transition().style('fill','rgb(77,225,38)')
+           })
+           .on('mouseleave',function(d){
+               d3.select('text').style('fill','rgb(100,100,100)')
+        mapB
+        .append('text')
+        .attr('class','text')
+        .attr("text-anchor", "middle")
+        .text(function(d){return d.properties.Name;})
+        .attr('dx',function(d){return pathGenerator.centroid(d)[0]})
+        .attr('dy',function(d){return pathGenerator.centroid(d)[1]})
+        .style('fill','rgb(100,100,100)')
+        //.call(getLighted)
+
+    })
+
+}
+////
+//function getTooltip(selection){
+//    selection
+//        .on('mouseenter',function(d){
+//            var name=(incomeById.get(d.properties.geoid)).Name
+//            var tooltip=d3.select('.custom-tooltip');
+//            tooltip
+//                .transition()
+//                .style('opacity',1);
+//            tooltip.select('#name').html(name);
+//
+//        })
+//        .on('mousemove',function(){
+//            var xy=d3.mouse(canvas.node());
+//            var tooltip=d3.select('.custom-tooltip');
+//            tooltip
+//                .style('left',xy[0]+50+'px')
+//                .style('top',(xy[1]+50)+'px')
+//            //.html('test');
+//
+//        })
+//        .on('mouseleave',function(){
+//            var tooltip=d3.select('custom-tooltip')
+//                .transition()
+//                .style('opacity',0);
+//        }
+//    )
+//}

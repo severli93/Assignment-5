@@ -35,7 +35,15 @@ html,body{
     min-height:10px;
     padding:0px 10px;
 }
-
+/*.canvas .custom-tooltip{*/
+	/*position:absolute;*/
+	/*/!*border:1px solid grey;*!/*/
+	/*width:150px;*/
+	/*min-height:10px;*/
+	/*padding:0px 10px;*/
+	/*opacity:0;*/
+	/*background-color:rgba(200,200,200,.4)*/
+/*}*/
 /*------------font-------------*/
 body{
 	font-size: 16px;
@@ -45,3 +53,8 @@ h2{ font-size:1.1em;}
 p{ font-size: .9em;}
 
 /*------------svg--------------*/
+/*.neighbor{*/
+	/*fill:none;*/
+	/*stroke:green;*/
+	/*stroke-width:1px;*/
+/*}*/
