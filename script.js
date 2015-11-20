@@ -57,7 +57,6 @@ function draw(census,neighbors){
         .append('g')
         .attr('class','map-census')
 
-
     mapA
         .append('path')
         .attr('d', pathGenerator)
@@ -65,8 +64,7 @@ function draw(census,neighbors){
             var income=(incomeById.get(d.properties.geoid)).income
             console.log(income);
             return colorScale(income);})
-
-        //.call(getTooltips())
+        .call(getTooltips)
 
    var mapB= map.append('g')
        .selectAll('.map2-neighbors')
@@ -80,13 +78,7 @@ function draw(census,neighbors){
         .attr('d', pathGenerator)
         .style('fill','none')
         .style('stroke','white')
-           .on('mouseenter',function(d){
-               console.log(this);
-               d3.select('text')
-                   .transition().style('fill','rgb(77,225,38)')
-           })
-           .on('mouseleave',function(d){
-               d3.select('text').style('fill','rgb(100,100,100)')
+
         mapB
         .append('text')
         .attr('class','text')
@@ -95,36 +87,52 @@ function draw(census,neighbors){
         .attr('dx',function(d){return pathGenerator.centroid(d)[0]})
         .attr('dy',function(d){return pathGenerator.centroid(d)[1]})
         .style('fill','rgb(100,100,100)')
-        //.call(getLighted)
+
+         mapB
+        .on('mouseenter',function(d){
+            //console.log(this);
+            d3.selectAll('text')
+                .transition().style('fill','rgb(77,225,38)')
+        })
+        .on('mouseleave',function(d){
+            d3.selectAll('text').style('fill','rgb(100,100,100)')
+
 
     })
 
 }
-////
-//function getTooltip(selection){
-//    selection
-//        .on('mouseenter',function(d){
-//            var name=(incomeById.get(d.properties.geoid)).Name
-//            var tooltip=d3.select('.custom-tooltip');
-//            tooltip
-//                .transition()
-//                .style('opacity',1);
-//            tooltip.select('#name').html(name);
-//
-//        })
-//        .on('mousemove',function(){
-//            var xy=d3.mouse(canvas.node());
-//            var tooltip=d3.select('.custom-tooltip');
-//            tooltip
-//                .style('left',xy[0]+50+'px')
-//                .style('top',(xy[1]+50)+'px')
-//            //.html('test');
-//
-//        })
-//        .on('mouseleave',function(){
-//            var tooltip=d3.select('custom-tooltip')
-//                .transition()
-//                .style('opacity',0);
-//        }
-//    )
-//}
+
+function getTooltips(selection){
+    selection
+        .on('mouseenter',function(d){
+
+            var tooltip=d3.select('.custom-tooltip');
+            tooltip
+                .transition()
+                .style('opacity',1);
+
+           var name=(incomeById.get(d.properties.geoid)).name
+            var value=(incomeById.get(d.properties.geoid)).income
+            //console.log("name is "+name)
+            console.log("income is "+value)
+
+            tooltip.select('#value').html(value);
+            tooltip.select('#name').html(name);
+
+        })
+        .on('mousemove',function(){
+            var xy=d3.mouse(canvas.node());
+            var tooltip=d3.select('.custom-tooltip');
+            tooltip
+                .style('left',xy[0]+50+'px')
+                .style('top',(xy[1]+50)+'px')
+            //.html('test');
+
+        })
+        .on('mouseleave',function(){
+            var tooltip=d3.select('custom-tooltip')
+                .transition()
+                .style('opacity',0);
+        }
+    )
+}
