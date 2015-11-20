@@ -78,6 +78,7 @@ function draw(census,neighbors){
         .attr('d', pathGenerator)
         .style('fill','none')
         .style('stroke','white')
+           .call(BlingBling1)
 
         mapB
         .append('text')
@@ -87,18 +88,19 @@ function draw(census,neighbors){
         .attr('dx',function(d){return pathGenerator.centroid(d)[0]})
         .attr('dy',function(d){return pathGenerator.centroid(d)[1]})
         .style('fill','rgb(100,100,100)')
+        .call(BlingBling2)
 
-         mapB
-        .on('mouseenter',function(d){
-            //console.log(this);
-            d3.selectAll('text')
-                .transition().style('fill','rgb(77,225,38)')
-        })
-        .on('mouseleave',function(d){
-            d3.selectAll('text').style('fill','rgb(100,100,100)')
-
-
-    })
+    //     mapB
+    //    .on('mouseenter',function(d){
+    //        //console.log(this);
+    //        d3.select('text')
+    //            .transition().style('fill','rgb(77,225,38)')
+    //    })
+    //    .on('mouseleave',function(d){
+    //        d3.select('text').style('fill','rgb(100,100,100)')
+    //
+    //
+    //})
 
 }
 
@@ -109,6 +111,7 @@ function getTooltips(selection){
             var tooltip=d3.select('.custom-tooltip');
             tooltip
                 .transition()
+
                 .style('opacity',1);
 
            var name=(incomeById.get(d.properties.geoid)).name
@@ -136,3 +139,27 @@ function getTooltips(selection){
         }
     )
 }
+ function BlingBling1(selection){
+     selection
+         .on('mouseenter',function(d){
+             //console.log(this);
+             //selection.style('fill','rgb(100,100,100)')
+             d3.select(this) //this --> selection
+                 .transition().style('fill','rgba(77,225,38,.2)')
+         })
+         .on('mouseleave',function(d){
+             d3.select(this).style('fill','none')
+
+         })}
+function BlingBling2(selection){
+    selection
+        .on('mouseenter',function(d){
+            //console.log(this);
+            //selection.style('fill','rgb(100,100,100)')
+            d3.select(this) //this --> selection
+                .transition().style('fill','rgb(77,225,38)')
+        })
+        .on('mouseleave',function(d){
+            d3.select(this).style('fill','rgb(100,100,100)')
+
+        })}
