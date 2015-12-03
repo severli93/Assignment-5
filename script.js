@@ -62,9 +62,9 @@ function draw(census,neighbors){
         .attr('d', pathGenerator)
         .style('fill',function(d){
             var income=(incomeById.get(d.properties.geoid)).income
-            console.log(income);
+            //console.log(income);
             return colorScale(income);})
-        .call(getTooltips)
+        .call(getTooltips1)
 
    var mapB= map.append('g')
        .selectAll('.map2-neighbors')
@@ -89,6 +89,7 @@ function draw(census,neighbors){
         .attr('dy',function(d){return pathGenerator.centroid(d)[1]})
         .style('fill','rgb(100,100,100)')
         .call(BlingBling2)
+            .call(getTooltips2)
 
     //     mapB
     //    .on('mouseenter',function(d){
@@ -104,7 +105,7 @@ function draw(census,neighbors){
 
 }
 
-function getTooltips(selection){
+function getTooltips1(selection){
     selection
         .on('mouseenter',function(d){
 
@@ -114,12 +115,51 @@ function getTooltips(selection){
 
                 .style('opacity',1);
 
-           var name=(incomeById.get(d.properties.geoid)).name
+           //var name=(incomeById.get(d.properties.geoid)).name
+           // var name = d.properties.Name
+           // console.log('name is ',name)
             var value=(incomeById.get(d.properties.geoid)).income
             //console.log("name is "+name)
             console.log("income is "+value)
 
             tooltip.select('#value').html(value);
+            //tooltip.select('#name').html(name);
+
+        })
+        .on('mousemove',function(){
+            var xy=d3.mouse(canvas.node());
+            var tooltip=d3.select('.custom-tooltip');
+            tooltip
+                .style('left',xy[0]+50+'px')
+                .style('top',(xy[1]+50)+'px')
+            //.html('test');
+
+        })
+        .on('mouseleave',function(){
+            var tooltip=d3.select('custom-tooltip')
+                .transition()
+                .style('opacity',0);
+        }
+    )
+}
+
+function getTooltips2(selection){
+    selection
+        .on('mouseenter',function(d){
+
+            var tooltip=d3.select('.custom-tooltip');
+            tooltip
+                .transition()
+
+                .style('opacity',1);
+
+            //var name=(incomeById.get(d.properties.geoid)).name
+            var name = d.properties.Name
+            console.log('name is ',name)
+            //var value=(incomeById.get(d.properties.geoid)).income
+            //console.log("income is "+value)
+
+            //tooltip.select('#value').html(value);
             tooltip.select('#name').html(name);
 
         })
