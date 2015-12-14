@@ -25,6 +25,7 @@ var projection = d3.geo.mercator()
 var pathGenerator = d3.geo.path().projection(projection);
 
 //TODO: create a color scale
+
 var colorScale=d3.scale.linear().domain([0,300000]).range(['red','blue']);
 //var colorScale = d3.scale.linear().domain([0,.2]).range(['white','blue']);
 
@@ -61,47 +62,40 @@ function draw(census,neighbors){
         .append('path')
         .attr('d', pathGenerator)
         .style('fill',function(d){
-            var income=(incomeById.get(d.properties.geoid)).income
-            //console.log(income);
+            var income=(incomeById.get(d.properties.geoid)).income;
+            console.log(income);
             return colorScale(income);})
         .call(getTooltips1)
 
    var mapB= map.append('g')
-       .selectAll('.map2-neighbors')
-       .data(neighbors.features)
-       .enter()
+       .selectAll('.map-neighbors')
+       .data(neighbors.features);
+   var mapEnter=mapB.enter()
        .append('g')
-       .attr('class','map2-neighbors')
+       .attr('class','map-neighbors');
+   var mapExit=mapB.exit()
+       .transition()
+       .remove()
 
-       mapB
-       .append('path')
-        .attr('d', pathGenerator)
-        .style('fill','none')
-        .style('stroke','white')
+   mapB
+           .append('path')
+           .attr('d', pathGenerator)
+           .style('stroke','white')
+           .style('fill','rgba(77,225,38,0)')
            .call(BlingBling1)
 
-        mapB
-        .append('text')
-        .attr('class','text')
-        .attr("text-anchor", "middle")
-        .text(function(d){return d.properties.Name;})
-        .attr('dx',function(d){return pathGenerator.centroid(d)[0]})
-        .attr('dy',function(d){return pathGenerator.centroid(d)[1]})
-        .style('fill','rgb(100,100,100)')
-        .call(BlingBling2)
+   mapB
+            .append('text')
+            .attr('class','text')
+            .attr("text-anchor", "middle")
+            .text(function(d){return d.properties.Name;})
+            .attr('dx',function(d){return pathGenerator.centroid(d)[0]})
+            .attr('dy',function(d){return pathGenerator.centroid(d)[1]})
+            .style('fill','rgba(77,225,38,0)')
+            .call(BlingBling2)
+   mapB
             .call(getTooltips2)
 
-    //     mapB
-    //    .on('mouseenter',function(d){
-    //        //console.log(this);
-    //        d3.select('text')
-    //            .transition().style('fill','rgb(77,225,38)')
-    //    })
-    //    .on('mouseleave',function(d){
-    //        d3.select('text').style('fill','rgb(100,100,100)')
-    //
-    //
-    //})
 
 }
 
@@ -112,12 +106,8 @@ function getTooltips1(selection){
             var tooltip=d3.select('.custom-tooltip');
             tooltip
                 .transition()
-
                 .style('opacity',1);
 
-           //var name=(incomeById.get(d.properties.geoid)).name
-           // var name = d.properties.Name
-           // console.log('name is ',name)
             var value=(incomeById.get(d.properties.geoid)).income
             //console.log("name is "+name)
             console.log("income is "+value)
@@ -142,7 +132,6 @@ function getTooltips1(selection){
         }
     )
 }
-
 function getTooltips2(selection){
     selection
         .on('mouseenter',function(d){
@@ -150,7 +139,6 @@ function getTooltips2(selection){
             var tooltip=d3.select('.custom-tooltip');
             tooltip
                 .transition()
-
                 .style('opacity',1);
 
             //var name=(incomeById.get(d.properties.geoid)).name
@@ -180,26 +168,25 @@ function getTooltips2(selection){
     )
 }
  function BlingBling1(selection){
+     console.log('bb1');
      selection
          .on('mouseenter',function(d){
-             //console.log(this);
-             //selection.style('fill','rgb(100,100,100)')
              d3.select(this) //this --> selection
-                 .transition().style('fill','rgba(77,225,38,.2)')
+                 .style('fill','rgba(77,225,38,.2)')
          })
          .on('mouseleave',function(d){
-             d3.select(this).style('fill','none')
+             d3.select(this).style('fill','rgba(77,225,38,0)')
 
          })}
 function BlingBling2(selection){
+
     selection
         .on('mouseenter',function(d){
-            //console.log(this);
-            //selection.style('fill','rgb(100,100,100)')
             d3.select(this) //this --> selection
-                .transition().style('fill','rgb(77,225,38)')
+                .style('fill','rgba(77,225,38,1)')
         })
         .on('mouseleave',function(d){
-            d3.select(this).style('fill','rgb(100,100,100)')
+            d3.select(this)//this --> selection
+                .style('fill','rgba(77,225,38,0)')
 
         })}
